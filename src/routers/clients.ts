@@ -1,29 +1,37 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { User } from "../types";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 router.post("/register", async (req: Request, res: Response) => {
-  console.log("Request body:", req.body);
   const user = {
     name: req.body.name,
     email: req.body.email,
     address: req.body.address,
     phone: req.body.phone,
   };
-  console.log("Name:", user.name);
-  console.log("Email:", user.email);
-  console.log("Address:", user.address);
-  console.log("Phone:", user.phone);
+
   if (!user.name || !user.email || !user.address || !user.phone) {
-    res
+    return res
       .status(400)
       .json({ error: "Please provide name, email, address, and phone" });
   }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: user.email },
+  });
+
+  if (existingUser) {
+    return res.status(400).json({ error: "Email already in use" });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(user.email)) {
+    res.status(400).json({ error: "Invalid email format" });
+  }
+
   try {
-    console.log("User:", user);
     const newUser = await prisma.user.create({
       data: {
         name: user.name,
@@ -32,10 +40,35 @@ router.post("/register", async (req: Request, res: Response) => {
         phone: user.phone,
       },
     });
-    res.json(newUser);
+    return res.status(200).json(newUser);
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/login", async (req: Request, res: Response) => {
+  const email = req.body.email;
+
+  console.log(email);
+
+  if (!email) {
+    return res.status(400).json({ error: "Please provide email and password" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+
+    return res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
