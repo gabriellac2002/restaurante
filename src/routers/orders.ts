@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response): Promise<any> => {
   const { userId, products } = req.body;
 
   if (
@@ -97,7 +97,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response): Promise<any> => {
   const { id } = req.params;
 
   try {
@@ -122,7 +122,7 @@ router.get("/:id", async (req: Request, res: Response) => {
       totalPrice: order.totalPrice,
       status: order.status,
       createdAt: order.createdAt,
-      products: order.items.map(item => ({
+      products: order.items.map((item) => ({
         productId: item.productId,
         name: item.product.name,
         quantity: item.quantity,

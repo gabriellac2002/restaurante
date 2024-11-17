@@ -1,14 +1,12 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import sharp from "sharp";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post("/", async (req: Request, res: Response) => {
-  const { name, price, description, image, category } = req.body;
-
-  console.log(req.body);
+router.post("/", async (req: Request, res: Response): Promise<any> => {
+  const { name, price, description, category } = req.body;
+  console.log(req.files);
 
   if (!name || !price || !description || !category) {
     return res.status(400).json({ error: "All fields are required" });
@@ -19,16 +17,18 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Price must be a positive number" });
   }
 
-  console.log('imagem' + image);
-
   try {
-    
+    if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+      return res.status(400).json({ error: "File is required" });
+    }
+    const file = req.files[0];
+
     const newProduct = await prisma.product.create({
       data: {
         name,
         price: parsedPrice,
         description,
-        image: image,
+        image: file.filename,
         category,
       },
     });
@@ -50,7 +50,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response): Promise<any> => {
   const { id } = req.params;
 
   try {
@@ -68,7 +68,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response): Promise<any> => {
   const { id } = req.params;
   console.log(req.body);
   const { name, price, description, imageUrl, category } = req.body;
@@ -102,7 +102,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
   const { id } = req.params;
 
   try {

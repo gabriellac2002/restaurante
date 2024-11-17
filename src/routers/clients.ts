@@ -4,12 +4,13 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post("/register", async (req: Request, res: Response) => {
+router.post("/register", async (req: Request, res: Response): Promise<any> => {
   const user = {
     name: req.body.name,
     email: req.body.email,
     address: req.body.address,
     phone: req.body.phone,
+    isAdmin: req.body.isAdmin || false,
   };
 
   if (!user.name || !user.email || !user.address || !user.phone) {
@@ -38,6 +39,7 @@ router.post("/register", async (req: Request, res: Response) => {
         email: user.email,
         address: user.address,
         phone: user.phone,
+        isAdmin: user.isAdmin,
       },
     });
     return res.status(200).json(newUser);
@@ -47,7 +49,7 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response): Promise<any> => {
   const email = req.body.email;
 
   console.log(email);
