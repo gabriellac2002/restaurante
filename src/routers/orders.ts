@@ -65,6 +65,38 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const orders = await prisma.order.findMany({
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    const ordersDetails = orders.map(order => ({
+      id: order.id,
+      userId: order.userId,
+      totalPrice: order.totalPrice,
+      status: order.status,
+      createdAt: order.createdAt,
+      products: order.items.map(item => ({
+        productId: item.productId,
+        name: item.product.name,
+        quantity: item.quantity,
+        price: item.product.price,
+      })),
+    }));
+
+    res.status(200).json(ordersDetails);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+
 router.get("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
 
