@@ -1,35 +1,45 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import sharp from "sharp";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 router.post("/", async (req: Request, res: Response) => {
-  const { name, price, description, imageUrl, category } = req.body;
+  const { name, price, description, image, category } = req.body;
+
+  console.log(req.body);
 
   if (!name || !price || !description || !category) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  if (price <= 0) {
+  const parsedPrice = parseFloat(price);
+  if (isNaN(parsedPrice) || parsedPrice <= 0) {
     return res.status(400).json({ error: "Price must be a positive number" });
   }
 
+  console.log('imagem' + image);
+
   try {
+    
     const newProduct = await prisma.product.create({
       data: {
         name,
-        price,
+        price: parsedPrice,
         description,
-        image: imageUrl || null,
+        image: image,
         category,
       },
     });
     res.status(201).json(newProduct);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Failed to create product" });
   }
 });
+
+
 
 router.get("/", async (req: Request, res: Response) => {
   try {
@@ -60,15 +70,17 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.put("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
+  console.log(req.body);
   const { name, price, description, imageUrl, category } = req.body;
 
   const updateData: any = {};
   if (name) updateData.name = name;
   if (price) {
-    if (price <= 0) {
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
       return res.status(400).json({ error: "Price must be a positive number" });
     }
-    updateData.price = price;
+    updateData.price = parsedPrice;
   }
   if (description) updateData.description = description;
   if (imageUrl) updateData.image = imageUrl;
@@ -85,6 +97,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     if ((error as any).code === "P2025") {
       return res.status(404).json({ error: "Product not found" });
     }
+    console.log(error);
     res.status(500).json({ error: "Failed to update product" });
   }
 });

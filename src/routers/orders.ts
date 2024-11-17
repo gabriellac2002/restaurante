@@ -17,7 +17,6 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   try {
-    // Validar se os produtos selecionados estão disponíveis e calcular o valor total do pedido
     let totalPrice = 0;
     const productIds = products.map((product: any) => product.productId);
     const availableProducts = await prisma.product.findMany({
@@ -42,7 +41,6 @@ router.post("/", async (req: Request, res: Response) => {
       };
     });
 
-    // Criar o pedido no banco de dados
     const newOrder = await prisma.order.create({
       data: {
         userId,
@@ -51,7 +49,6 @@ router.post("/", async (req: Request, res: Response) => {
       },
     });
 
-    // Criar os itens do pedido no banco de dados
     const orderItemsData = orderItems.map((item: any) => ({
       orderId: newOrder.id,
       productId: item.productId,
