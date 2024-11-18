@@ -39,8 +39,6 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-
-
 router.get("/", async (req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany();
@@ -71,7 +69,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<any> => {
 router.put("/:id", async (req: Request, res: Response): Promise<any> => {
   const { id } = req.params;
   console.log(req.body);
-  const { name, price, description, imageUrl, category } = req.body;
+  const { name, price, description, category } = req.body;
 
   const updateData: any = {};
   if (name) updateData.name = name;
@@ -83,7 +81,12 @@ router.put("/:id", async (req: Request, res: Response): Promise<any> => {
     updateData.price = parsedPrice;
   }
   if (description) updateData.description = description;
-  if (imageUrl) updateData.image = imageUrl;
+
+  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+    const file = req.files[0];
+    updateData.image = file.filename;
+  }
+
   if (category) updateData.category = category;
 
   try {
