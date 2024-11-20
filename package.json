@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "start": "nodemon --exec ts-node src/server.ts",
-    "vercel-build": "npx prisma migrate deploy",
+    "vercel-build": "npx prisma migrate deploy"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
