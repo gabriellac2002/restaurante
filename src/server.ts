@@ -15,8 +15,10 @@ const storage: StorageEngine = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+var cors = require("cors");
 const app = express();
 app.use('/uploads', express.static('uploads'));
+app.use(cors());
 
 
 const port = 3000;
