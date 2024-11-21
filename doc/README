@@ -1,0 +1,537 @@
+# **Product API - README**
+
+## **Descrição**
+Esta API gerencia operações CRUD (Criar, Ler, Atualizar e Excluir) para produtos em um sistema de restaurante. Ela utiliza **Express.js** e **Prisma ORM** para lidar com requisições HTTP e interagir com um banco de dados. A API suporta o envio de imagens associadas aos produtos.
+
+---
+
+## **Endpoints**
+
+### **1. Criar um Produto**
+**Rota:** `POST /`  
+**Descrição:** Cria um novo produto no banco de dados.
+
+#### **Corpo da Requisição (JSON)**  
+```json
+{
+  "name": "Nome do Produto",
+  "price": "10.99",
+  "description": "Descrição do produto",
+  "category": "Categoria do produto"
+}
+```
+
+#### **Resposta de Sucesso (201 Created)**
+```json
+{
+  "id": "ID do produto",
+  "name": "Nome do Produto",
+  "price": 10.99,
+  "description": "Descrição do produto",
+  "image": "nome-do-arquivo.png",
+  "category": "Categoria do produto"
+}
+```
+
+#### **Erros Possíveis**
+- **400 Bad Request:** Faltando campos obrigatórios ou preço inválido.  
+- **500 Internal Server Error:** Falha ao criar o produto.
+
+---
+
+### **2. Listar Todos os Produtos**
+**Rota:** `GET /`  
+**Descrição:** Retorna uma lista de todos os produtos.
+
+#### **Resposta de Sucesso (200 OK)**
+```json
+[
+  {
+    "id": "ID do produto",
+    "name": "Nome do Produto",
+    "price": 10.99,
+    "description": "Descrição do produto",
+    "image": "nome-do-arquivo.png",
+    "category": "Categoria do produto"
+  },
+  ...
+]
+```
+
+#### **Erros Possíveis**
+- **500 Internal Server Error:** Falha ao buscar os produtos.
+
+---
+
+### **3. Buscar Produto por ID**
+**Rota:** `GET /:id`  
+**Descrição:** Retorna um único produto pelo ID.
+
+#### **Parâmetro de Rota**
+- **`:id`**: ID do produto.
+
+#### **Resposta de Sucesso (200 OK)**
+```json
+{
+  "id": "ID do produto",
+  "name": "Nome do Produto",
+  "price": 10.99,
+  "description": "Descrição do produto",
+  "image": "nome-do-arquivo.png",
+  "category": "Categoria do produto"
+}
+```
+
+#### **Erros Possíveis**
+- **404 Not Found:** Produto não encontrado.  
+- **500 Internal Server Error:** Falha ao buscar o produto.
+
+---
+
+### **4. Atualizar um Produto**
+**Rota:** `PUT /:id`  
+**Descrição:** Atualiza informações de um produto existente.
+
+#### **Parâmetro de Rota**
+- **`:id`**: ID do produto.
+
+#### **Corpo da Requisição (JSON)**  
+Campos opcionais para atualização:
+```json
+{
+  "name": "Novo Nome",
+  "price": "15.99",
+  "description": "Nova descrição",
+  "category": "Nova categoria"
+}
+```
+
+#### **Resposta de Sucesso (200 OK)**
+```json
+{
+  "id": "ID do produto",
+  "name": "Novo Nome",
+  "price": 15.99,
+  "description": "Nova descrição",
+  "image": "novo-arquivo.png",
+  "category": "Nova categoria"
+}
+```
+
+#### **Erros Possíveis**
+- **400 Bad Request:** Preço inválido ou erro nos dados fornecidos.  
+- **404 Not Found:** Produto não encontrado.  
+- **500 Internal Server Error:** Falha ao atualizar o produto.
+
+---
+
+### **5. Excluir um Produto**
+**Rota:** `DELETE /:id`  
+**Descrição:** Remove um produto pelo ID.
+
+#### **Parâmetro de Rota**
+- **`:id`**: ID do produto.
+
+#### **Resposta de Sucesso (200 OK)**
+```json
+{
+  "id": "ID do produto",
+  "name": "Nome do Produto",
+  "price": 10.99,
+  "description": "Descrição do produto",
+  "image": "nome-do-arquivo.png",
+  "category": "Categoria do produto"
+}
+```
+
+#### **Erros Possíveis**
+- **404 Not Found:** Produto não encontrado.  
+- **500 Internal Server Error:** Falha ao deletar o produto.
+
+---
+# Documentação da API de Pedidos
+
+## Visão Geral
+Essa API fornece funcionalidades para gerenciar pedidos dentro de uma plataforma de e-commerce. Ela permite que os usuários criem, busquem e obtenham informações detalhadas sobre pedidos e seus produtos associados.
+
+## Endpoints
+
+### 1. Criar Pedido
+**POST** `/orders`
+
+#### Descrição:
+Cria um novo pedido com base no ID do usuário e em uma lista de produtos.
+
+#### Corpo da Requisição:
+```json
+{
+  "userId": "string", // ID do usuário que está fazendo o pedido
+  "products": [       // Array de produtos do pedido
+    {
+      "productId": "string", // ID do produto
+      "quantity": "number"   // Quantidade do produto
+    }
+  ]
+}
+```
+
+#### Resposta:
+- **Sucesso**: Retorna uma resposta JSON com o ID do pedido criado.
+```json
+{
+  "orderId": "string"
+}
+```
+- **Erro**: Retorna uma mensagem de erro se os campos obrigatórios estiverem ausentes ou inválidos.
+```json
+{
+  "error": "string"
+}
+```
+
+#### Exemplo de Requisição:
+```json
+{
+  "userId": "1234",
+  "products": [
+    { "productId": "1", "quantity": 2 },
+    { "productId": "2", "quantity": 1 }
+  ]
+}
+```
+
+#### Exemplo de Resposta:
+```json
+{
+  "orderId": "5678"
+}
+```
+
+### 2. Obter Todos os Pedidos
+**GET** `/orders`
+
+#### Descrição:
+Recupera todos os pedidos no sistema, incluindo detalhes sobre os produtos de cada pedido.
+
+#### Resposta:
+- **Sucesso**: Retorna uma lista de pedidos com informações detalhadas sobre os produtos de cada pedido.
+```json
+[
+  {
+    "id": "string",
+    "userId": "string",
+    "totalPrice": "number",
+    "status": "string",
+    "createdAt": "string",
+    "products": [
+      {
+        "productId": "string",
+        "name": "string",
+        "quantity": "number",
+        "price": "number"
+      }
+    ]
+  }
+]
+```
+
+#### Exemplo de Resposta:
+```json
+[
+  {
+    "id": "5678",
+    "userId": "1234",
+    "totalPrice": 100.00,
+    "status": "pending",
+    "createdAt": "2024-11-21T12:34:56Z",
+    "products": [
+      {
+        "productId": "1",
+        "name": "Produto A",
+        "quantity": 2,
+        "price": 25.00
+      },
+      {
+        "productId": "2",
+        "name": "Produto B",
+        "quantity": 1,
+        "price": 50.00
+      }
+    ]
+  }
+]
+```
+
+### 3. Obter Pedido por ID
+**GET** `/orders/:id`
+
+#### Descrição:
+Recupera um pedido específico pelo seu ID, incluindo detalhes sobre os produtos no pedido.
+
+#### Resposta:
+- **Sucesso**: Retorna um pedido único com informações detalhadas.
+```json
+{
+  "id": "string",
+  "userId": "string",
+  "totalPrice": "number",
+  "status": "string",
+  "createdAt": "string",
+  "products": [
+    {
+      "productId": "string",
+      "name": "string",
+      "quantity": "number",
+      "price": "number"
+    }
+  ]
+}
+```
+- **Erro**: Retorna uma mensagem de erro se o pedido não for encontrado.
+```json
+{
+  "error": "Pedido não encontrado"
+}
+```
+
+#### Exemplo de Requisição:
+```
+GET /orders/5678
+```
+
+#### Exemplo de Resposta:
+```json
+{
+  "id": "5678",
+  "userId": "1234",
+  "totalPrice": 100.00,
+  "status": "pending",
+  "createdAt": "2024-11-21T12:34:56Z",
+  "products": [
+    {
+      "productId": "1",
+      "name": "Produto A",
+      "quantity": 2,
+      "price": 25.00
+    },
+    {
+      "productId": "2",
+      "name": "Produto B",
+      "quantity": 1,
+      "price": 50.00
+    }
+  ]
+}
+```
+
+## Tratamento de Erros
+A API retorna várias respostas de erro para entradas inválidas ou problemas ao buscar ou atualizar dados:
+- **Campos obrigatórios ausentes**: Retorna erro `400 Bad Request` com uma mensagem de erro.
+- **Produto não disponível**: Se algum dos produtos do pedido não estiver disponível, retorna erro `400 Bad Request`.
+- **Pedido não encontrado**: Se o pedido não existir, retorna erro `404 Not Found`.
+- **Problemas no servidor**: Caso ocorram erros internos do servidor, retorna erro `500 Internal Server Error`.
+
+## Exemplo de Resposta de Erro:
+```json
+{
+  "error": "Alguns produtos não estão disponíveis"
+}
+```
+
+## Observações:
+- O preço total do pedido é automaticamente calculado com base nos preços e quantidades dos produtos.
+- O status do pedido é definido como `"pending"` por padrão ao criar um novo pedido.
+
+# Documentação da API de Registro e Login de Usuário
+
+## Visão Geral
+Essa API permite que os usuários se registrem e façam login em um sistema. O registro cria um novo usuário e o login permite que um usuário existente acesse a plataforma. O sistema também realiza validações para garantir a integridade dos dados fornecidos.
+
+## Endpoints
+
+### 1. Registro de Usuário
+**POST** `/register`
+
+#### Descrição:
+Registra um novo usuário no sistema, realizando validações como a verificação de email único e o formato correto do email.
+
+#### Corpo da Requisição:
+```json
+{
+  "name": "string",      // Nome completo do usuário
+  "email": "string",     // Endereço de e-mail do usuário
+  "address": "string",   // Endereço do usuário
+  "phone": "string",     // Número de telefone do usuário
+  "isAdmin": "boolean"   // Indica se o usuário é um administrador (opcional, padrão: false)
+}
+```
+
+#### Resposta:
+- **Sucesso**: Retorna os dados do usuário criado.
+```json
+{
+  "id": "string",
+  "name": "string",
+  "email": "string",
+  "address": "string",
+  "phone": "string",
+  "isAdmin": "boolean",
+  "createdAt": "string"
+}
+```
+- **Erro**: Retorna uma mensagem de erro caso os dados fornecidos sejam inválidos.
+```json
+{
+  "error": "string"
+}
+```
+
+#### Exemplo de Requisição:
+```json
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "address": "Rua Exemplo, 123",
+  "phone": "999999999",
+  "isAdmin": false
+}
+```
+
+#### Exemplo de Resposta:
+```json
+{
+  "id": "1",
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "address": "Rua Exemplo, 123",
+  "phone": "999999999",
+  "isAdmin": false,
+  "createdAt": "2024-11-21T12:34:56Z"
+}
+```
+
+#### Possíveis Erros:
+- **Campos obrigatórios ausentes**:
+```json
+{
+  "error": "Please provide name, email, address, and phone"
+}
+```
+- **Email já em uso**:
+```json
+{
+  "error": "Email already in use"
+}
+```
+- **Formato de email inválido**:
+```json
+{
+  "error": "Invalid email format"
+}
+```
+- **Erro no servidor**:
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+---
+
+### 2. Login de Usuário
+**POST** `/login`
+
+#### Descrição:
+Permite que um usuário faça login informando seu email. O sistema valida a existência do usuário com esse email.
+
+#### Corpo da Requisição:
+```json
+{
+  "email": "string"  // Endereço de e-mail do usuário
+}
+```
+
+#### Resposta:
+- **Sucesso**: Retorna uma mensagem de sucesso e os dados do usuário autenticado.
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "address": "string",
+    "phone": "string",
+    "isAdmin": "boolean",
+    "createdAt": "string"
+  }
+}
+```
+- **Erro**: Retorna uma mensagem de erro caso o email fornecido não exista.
+```json
+{
+  "error": "Invalid email"
+}
+```
+
+#### Exemplo de Requisição:
+```json
+{
+  "email": "joao@example.com"
+}
+```
+
+#### Exemplo de Resposta:
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "id": "1",
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "address": "Rua Exemplo, 123",
+    "phone": "999999999",
+    "isAdmin": false,
+    "createdAt": "2024-11-21T12:34:56Z"
+  }
+}
+```
+
+#### Possíveis Erros:
+- **Email não encontrado**:
+```json
+{
+  "error": "Invalid email"
+}
+```
+- **Erro no servidor**:
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+## Validações Realizadas
+1. **Registro**:
+   - Verifica se os campos obrigatórios (`name`, `email`, `address`, `phone`) estão presentes.
+   - Valida se o email fornecido possui o formato correto usando uma expressão regular.
+   - Verifica se o email já está em uso no banco de dados.
+   
+2. **Login**:
+   - Verifica se o email fornecido existe no banco de dados para autenticação.
+
+## Tratamento de Erros
+A API utiliza o status HTTP apropriado e retorna mensagens de erro claras:
+- **400 Bad Request**: Quando há informações faltando ou inválidas.
+- **500 Internal Server Error**: Para erros internos do servidor ao criar ou autenticar o usuário.
+
+## Exemplo Completo de Fluxo
+1. **Registro**:
+   - Usuário fornece nome, email, endereço e telefone.
+   - O sistema valida e registra o usuário ou retorna erros, como email duplicado ou formato inválido.
+
+2. **Login**:
+   - Usuário fornece o email.
+   - O sistema verifica se o email existe e retorna os detalhes do usuário ou um erro de email inválido.
+
+Essa API oferece um processo simples de registro e login, com validações e mensagens de erro claras para ajudar no uso e integração.
