@@ -55,3 +55,11 @@ Certifique-se de ter os seguintes softwares instalados:
 
 - `npm run dev`: Inicia o servidor de desenvolvimento.
 - `npx prisma migrate dev`: Executa as migrações do Prisma.
+
+
+##
+# A API está hospedada em: [https://restaurante-omega-pearl.vercel.app/](https://restaurante-omega-pearl.vercel.app/)
+
+
+
+
