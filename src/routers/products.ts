@@ -18,17 +18,17 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
   }
 
   try {
-    if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
-      return res.status(400).json({ error: "File is required" });
+    let image = null;
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      image = req.files[0].filename;
     }
-    const file = req.files[0];
 
     const newProduct = await prisma.product.create({
       data: {
         name,
         price: parsedPrice,
         description,
-        image: file.filename,
+        image,
         category,
       },
     });

@@ -3,15 +3,6 @@ import router from "./routers/router";
 import multer, { StorageEngine } from "multer";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import cors from "cors";
-
-const corsOptions = {
-  origin:
-    "https://front-restaurante-50y2u59x3-gabriellac2002s-projects.vercel.app", // Substitua pela sua URL de frontend
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
 
 const storage: StorageEngine = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -25,9 +16,7 @@ const storage: StorageEngine = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
-app.use('/uploads', express.static('uploads'));
-app.use(cors(corsOptions));
-
+app.use("/uploads", express.static("uploads"));
 
 const port = 3000;
 
