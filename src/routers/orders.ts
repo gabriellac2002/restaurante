@@ -82,6 +82,7 @@ router.get("/", async (req: Request, res: Response) => {
       id: order.id,
       userId: order.userId,
       userName: order.user.name,
+      userAdress: order.user.address,
       totalPrice: order.totalPrice,
       status: order.status,
       createdAt: order.createdAt,
